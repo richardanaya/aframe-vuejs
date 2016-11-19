@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.3.2/aframe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.7/vue.min.js"></script>
+  </head>
+  <body>
+      <a-scene>
+        <a-assets>
+          <a-asset-item id="thing" src="thing.dae"></a-asset-item>
+        </a-assets>
+        <a-entity position="0 1.8 5">
+          <a-camera wasd-controls-enabled=true fov=60 near=0.1 far=10000>
+            <a-cursor></a-cursor>
+            <a-entity cursor raycaster="far: 20; interval: 1000; objects: .clickable"></a-entity>
+          </a-camera>
+        </a-entity>
+        <a-entity id="scene">
+          <my-sphere v-for="n in offsetNumbers" v-bind:distance="n"></my-sphere>
+          <my-thing></my-thing>
+        </a-entity>
+      </a-scene>
+  </body>
+  <script>
+    Vue.component('my-thing', {
+      template: '<a-entity collada-model="#thing"></a-entity>',
+    })
+
+    Vue.component('my-sphere', {
+      props: ['distance'],
+      template: '<a-sphere radius=".5" v-bind:color="color" v-bind:position="pos" v-on:click="clicked"></a-sphere>',
+      computed: {
+        pos () {
+          return `${this.distance} 0 -4`;
+        }
+      },
+      data: function(){
+        return {
+          color:"#EF2D5E"
+        }
+      },
+      methods: {
+        clicked: function(){
+          this.color="#00FF00"
+        }
+      }
+    })
+    new Vue({
+      el: '#scene',
+      data: {
+       offsetNumbers:[0,1,-1]
+      }
+    })
+  </script>
+</html>
